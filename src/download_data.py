@@ -1,5 +1,6 @@
 # Install dependencies as needed:
 # pip install kagglehub[pandas-datasets]
+import os
 import kagglehub
 from kagglehub import KaggleDatasetAdapter
 
@@ -19,5 +20,6 @@ df = kagglehub.load_dataset(
 
 print("First 5 records:", df.head())
 
+os.makedirs("data", exist_ok=True)
 
 df.to_csv("data/orders.csv", index=False)
