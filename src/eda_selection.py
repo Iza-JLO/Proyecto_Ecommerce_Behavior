@@ -177,7 +177,7 @@ def main():
     df_final.to_csv("data/processed/df_final.csv", index=False)
     check(f"Guardado en data/processed/df_final.csv — Shape: {df_final.shape}", True)
  
-    separador("PIPELINE COMPLETADO ✅")
+    separador("PIPELINE COMPLETADO")
  
  
 if __name__ == "__main__":
