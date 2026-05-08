@@ -136,11 +136,15 @@ def seleccionar_features(df_enc: pd.DataFrame) -> list:
  
     print(f"\n  {'Variable':<30} {'MI Score':>10}")
     print(f"  {'-'*42}")
+    #El umbral fue modificado para dejar fuera variables que puedan ser data leakage
+    #Tales como impuestos, descuentos, etc. 
     for col, score in mi_series.items():
-        marca = " ✅" if score > MI_THRESHOLD else " ❌"
-        print(f"  {col:<30} {score:>10.4f}{marca}")
+      marca = " ✅" if 0.001 < score <= 0.3 else " ❌"
+      print(f"  {col:<30} {score:>10.4f}{marca}")
  
-    cols_seleccionadas = mi_series[mi_series > MI_THRESHOLD].index.tolist()
+    cols_seleccionadas = mi_series[
+    (mi_series > 0.001) & (mi_series <= 0.3)
+    ].index.tolist()
  
     print(f"\n  Variables finales ({len(cols_seleccionadas)} de {shape_inicial}):")
     for c in cols_seleccionadas:
