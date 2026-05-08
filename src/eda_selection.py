@@ -155,15 +155,18 @@ def target_encoder_data (df: pd.DataFrame):
     """
     y = df[TARGET]
     X = df.drop(TARGET, axis=1)
+    cols_encodear = ['product_name', 'category']
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=RANDOM_STATE)
     enc_auto = TargetEncoder(smooth="auto", target_type="continuous").set_output(transform="pandas")
 
-    X_train_trans = enc_auto.fit_transform(X_train[['category']], y_train)
-    X_test_trans = enc_auto.transform(X_test[['category']])
+    X_train_trans = enc_auto.fit_transform(X_train[cols_encodear], y_train)
+    X_test_trans = enc_auto.transform(X_test[cols_encodear])
 
-    X_train['category'] = X_train_trans
-    X_test['category'] = X_test_trans
+    X_train[cols_encodear] = X_train_trans
+    X_test[cols_encodear] = X_test_trans
+
+    return X_train, X_test, y_train, y_test
 
 
 
