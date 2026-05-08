@@ -14,3 +14,9 @@ Ejecutar en terminal:
 Ejecutar en terminal:
 
     1.-py src/download_data.py
+
+3 Pre-procesamiento inicial de datos: 
+
+Ejecutar en terminal:
+
+    1.-py src/eda_selection_data.py
