@@ -7,12 +7,15 @@ import os
 from sklearn.impute import KNNImputer
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.feature_selection import mutual_info_regression, VarianceThreshold
+from sklearn.preprocessing import TargetEncoder
+from sklearn.model_selection import train_test_split
 
 # ── CONFIGURACIÓN ───────────────────────────────────────────
 TARGET = "total_amount_usd"
 KNN_NEIGHBORS = 5
 CORR_THRESHOLD = 0.95
 MI_THRESHOLD = 0.01
+RANDOM_STATE = 97
  
  
 # ── HELPERS ─────────────────────────────────────────────────
@@ -145,6 +148,26 @@ def seleccionar_features(df_enc: pd.DataFrame) -> list:
  
     return cols_seleccionadas
  
+def target_encoder_data (df: pd.DataFrame):
+    """
+    WIP: La función tiene como objetivo transformar las columnas category y product_name
+    Actualmente, la función ya transforma category y retornará los conjutnos de train/test transformados y listos
+    """
+    y = df[TARGET]
+    X = df.drop(TARGET, axis=1)
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=RANDOM_STATE)
+    enc_auto = TargetEncoder(smooth="auto", target_type="continuous").set_output(transform="pandas")
+
+    X_train_trans = enc_auto.fit_transform(X_train[['category']], y_train)
+    X_test_trans = enc_auto.transform(X_test[['category']])
+
+    X_train['category'] = X_train_trans
+    X_test['category'] = X_test_trans
+
+
+
+
  
 # ── MAIN ────────────────────────────────────────────────────
 def main():
@@ -174,7 +197,7 @@ def main():
     # 6. Guardar resultado
     separador("PASO 6 — Guardar")
     df_final = df_imp[cols_seleccionadas + [TARGET]].copy()
-    df_final.to_csv("data/processed/df_final.csv", index=False)
+    df_final.to_csv("data/processed/df_visualizacion.csv", index=False)
     check(f"Guardado en data/processed/df_final.csv — Shape: {df_final.shape}", True)
  
     separador("PIPELINE COMPLETADO")
