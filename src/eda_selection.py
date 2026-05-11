@@ -7,7 +7,7 @@ import os
 from sklearn.impute import KNNImputer
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.feature_selection import mutual_info_regression, VarianceThreshold
-from sklearn.preprocessing import TargetEncoder
+from sklearn.preprocessing import TargetEncoder, OneHotEncoder
 from sklearn.model_selection import train_test_split
 
 # ── CONFIGURACIÓN ───────────────────────────────────────────
@@ -152,25 +152,35 @@ def seleccionar_features(df_enc: pd.DataFrame) -> list:
  
     return cols_seleccionadas
  
-def target_encoder_data (df: pd.DataFrame):
-    """
-    WIP: La función tiene como objetivo transformar las columnas category y product_name
-    Actualmente, la función ya transforma category y retornará los conjutnos de train/test transformados y listos
-    """
+def encoded_data(df: pd.DataFrame):
+    # Separamos el target del df oringinal para evitar dataleakage
     y = df[TARGET]
     X = df.drop(TARGET, axis=1)
-    cols_encodear = ['product_name', 'category']
-
+    
+    #Partición de datos en conjutnos de prueba y entrenamiento :p
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=RANDOM_STATE)
+
+    #OneHotEncoder
+    cols_onehot = ['payment_method', 'day_of_week', 'order_status']
+    ohe = OneHotEncoder(sparse_output=False, handle_unknown="ignore").set_output(transform="pandas")
+    
+    # Ajustar en train y transformar ambos
+    X_train_ohe = ohe.fit_transform(X_train[cols_onehot])
+    X_test_ohe = ohe.transform(X_test[cols_onehot])
+    
+    # Unir y eliminar originales
+    X_train = pd.concat([X_train.drop(columns=cols_onehot), X_train_ohe], axis=1)
+    X_test = pd.concat([X_test.drop(columns=cols_onehot), X_test_ohe], axis=1)
+
+    #TargetEncoder
+    cols_targetenc = ['product_name', 'category']
     enc_auto = TargetEncoder(smooth="auto", target_type="continuous").set_output(transform="pandas")
 
-    X_train_trans = enc_auto.fit_transform(X_train[cols_encodear], y_train)
-    X_test_trans = enc_auto.transform(X_test[cols_encodear])
-
-    X_train[cols_encodear] = X_train_trans
-    X_test[cols_encodear] = X_test_trans
+    X_train[cols_targetenc] = enc_auto.fit_transform(X_train[cols_targetenc], y_train)
+    X_test[cols_targetenc] = enc_auto.transform(X_test[cols_targetenc])
 
     return X_train, X_test, y_train, y_test
+
 
 
 
