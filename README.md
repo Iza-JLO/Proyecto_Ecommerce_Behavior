@@ -1,22 +1,76 @@
 # Proyecto_Ecommerce_Behavior
-Proyecto de Machine Learning enfocado en el análisis del comportamiento de usuarios en e-commerce. Se aplican y comparan distintos modelos predictivos para identificar patrones de navegación e intención de compra, incluyendo preprocesamiento, ingeniería de características y evaluación de desempeño
 
+Proyecto de Machine Learning enfocado en el analisis del comportamiento de usuarios en e-commerce. El codigo actual descarga datos de ordenes, ejecuta preprocesamiento y seleccion de caracteristicas, y compara modelos de regresion para predecir `total_amount_usd`.
 
-1 (Ambientes y requerimientos)
-Ejecutar en terminal:
+## Ejecucion rapida
 
-    1.-Crear un ambiente: py -m venv .venv
-    2.-.venv\Scripts\activate (windows)
-    3.-py -m pip install -r requirements.txt
+Crear y activar un entorno virtual en Windows:
 
-2 (Carga de datos)
+```powershell
+py -m venv .venv
+.\.venv\Scripts\activate
+py -m pip install -r requirements.txt
+```
 
-Ejecutar en terminal:
+Descargar datos:
 
-    1.-py src/download_data.py
+```powershell
+py src/download_data.py
+```
 
-3 Pre-procesamiento inicial de datos: 
+Ejecutar preprocesamiento:
 
-Ejecutar en terminal:
+```powershell
+py src/eda_selection.py
+```
 
-    1.-py src/eda_selection_data.py
+Entrenar y evaluar modelos:
+
+```powershell
+py src/models.py
+```
+
+## Documentacion
+
+La documentacion tecnica del proyecto esta disponible en `docs/`:
+
+- `01_descripcion_proyecto.md`
+- `02_arquitectura_general.md`
+- `03_flujo_datos.md`
+- `04_preprocesamiento.md`
+- `05_ingenieria_caracteristicas.md`
+- `06_modelos.md`
+- `07_evaluacion_resultados.md`
+- `08_sistema_analisis_predictivo.md`
+- `09_comparativa_papers_academicos.md`
+- `10_manual_ejecucion.md`
+- `11_model_card.md`
+- `12_conclusiones_limitaciones.md`
+- `13_prompt_actualizar_documentacion.md`
+
+## Comandos para agentes
+
+Este repositorio incluye un comando documentado para actualizar la documentacion de forma estricta:
+
+```txt
+/actualizar_doc
+```
+
+La definicion del comando esta en `.agents/commands/actualizar_doc.md`.
+
+## Estado actual
+
+Implementado:
+
+- Descarga de datos desde Kaggle.
+- Preprocesamiento y seleccion de caracteristicas.
+- Entrenamiento de modelos de regresion.
+- Evaluacion con MSE y R2 en consola.
+
+No identificado actualmente:
+
+- API de prediccion.
+- Dashboard.
+- Modelos serializados.
+- Resultados persistidos.
+- Tests automatizados.
