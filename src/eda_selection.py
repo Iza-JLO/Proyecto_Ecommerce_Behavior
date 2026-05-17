@@ -153,6 +153,8 @@ def seleccionar_features(df_enc: pd.DataFrame) -> list:
     return cols_seleccionadas
  
 def encoded_data(df: pd.DataFrame):
+    #Eliminamos algunas columnas que pueden ser data leakage o que no aportan información relevante para el modelo.
+    df = df.drop(columns=["discount_pct", "tax_pct", "shipping_fee_usd"], errors="ignore")
     # Separamos el target del df oringinal para evitar dataleakage
     y = df[TARGET]
     X = df.drop(TARGET, axis=1)

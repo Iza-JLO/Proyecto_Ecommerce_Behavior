@@ -1,7 +1,6 @@
 from eda_selection import encoded_data
 import pandas as pd
 
-#NOTA: FALTA TRANSFORMAR LA COLUMNA ORDER_STATUS/DAT OF WEEK/PAYMENT_METHOD o (USAR ONEHOT ENCODED)
 
 df_model = pd.read_csv("data/processed/df_visualizacion.csv")
 print("-"*50)
