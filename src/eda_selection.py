@@ -154,7 +154,7 @@ def seleccionar_features(df_enc: pd.DataFrame) -> list:
  
 def encoded_data(df: pd.DataFrame):
     #Eliminamos algunas columnas que pueden ser data leakage o que no aportan información relevante para el modelo.
-    df = df.drop(columns=["discount_pct", "tax_pct", "shipping_fee_usd"], errors="ignore")
+    df = df.drop(columns=["discount_pct", "tax_pct", "shipping_fee_usd", "returned", "order_status"], errors="ignore")
     # Separamos el target del df oringinal para evitar dataleakage
     y = df[TARGET]
     X = df.drop(TARGET, axis=1)
@@ -163,7 +163,7 @@ def encoded_data(df: pd.DataFrame):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=RANDOM_STATE)
 
     #OneHotEncoder
-    cols_onehot = ['payment_method', 'day_of_week', 'order_status']
+    cols_onehot = ['payment_method', 'day_of_week', 'month']
     ohe = OneHotEncoder(sparse_output=False, handle_unknown="ignore").set_output(transform="pandas")
     
     # Ajustar en train y transformar ambos
