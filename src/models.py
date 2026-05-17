@@ -6,7 +6,8 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.neural_network import MLPRegressor
 from xgboost import XGBRegressor
 from sklearn.svm import SVR
-from model_utils import entrenar_modelo_escalado, entrenar_modelo_no_escalado, evaluar_modelo
+from sklearn.neighbors import KNeighborsRegressor
+from model_utils import entrenar_modelo_escalado, entrenar_modelo_no_escalado, validar_modelo_cruzado_no_escalado, validar_modelo_cruzado_escalado, evaluar_modelo
 
 random_seed = 42
 
@@ -30,24 +31,28 @@ print(f"X_train: \n{X_train.info()}")
 
 #Primero voy a definir los modelos
 
-model_regresion = Lasso(alpha=0.1, random_state=random_seed)
 model_arbol = DecisionTreeRegressor(random_state=random_seed)
 model_rf = RandomForestRegressor(n_estimators=150, random_state=random_seed)
 model_mlp = MLPRegressor(hidden_layer_sizes=(256, 128, 64), solver="adam",max_iter=3000,batch_size=32, early_stopping=True, random_state=random_seed, learning_rate="adaptive", learning_rate_init=0.0001, alpha=0.0001)
 model_xgb = XGBRegressor(objective="reg:squarederror", random_state=random_seed, n_estimators=1200, learning_rate=0.02, max_depth=6, gamma=0.1, subsample=0.8, colsample_bytree=0.8)
 model_svr = SVR(C=50, gamma='scale', kernel="poly", degree=3, epsilon=0.1)
 model_eln = ElasticNet(alpha=0.001,l1_ratio=0.5,max_iter=10000,random_state=random_seed)
+model_knn = KNeighborsRegressor(n_neighbors=5, weights="distance", metric="minkowski", p=2)
 
 modelos_no_scalados = [model_arbol, model_rf, model_xgb]
-modelos_scalados = [model_regresion, model_mlp, model_svr, model_eln]
+modelos_scalados = [model_mlp, model_svr, model_eln, model_knn]
 
 for modelo in modelos_no_scalados:
+    print(f"Validacion cruzada {modelo.__class__.__name__} sin escalado...")
+    validar_modelo_cruzado_no_escalado(modelo, X_train, y_train)
     print(f"Entrenando modelo {modelo.__class__.__name__} sin escalado...")
     modelo_entrenado = entrenar_modelo_no_escalado(modelo, X_train, y_train)
     mse, r2 = evaluar_modelo(modelo_entrenado, X_test, y_test)
     print(f"Resultados para {modelo.__class__.__name__} sin escalado: MSE={mse:.4f}, R2={r2:.4f}")
 
 for modelo in modelos_scalados:
+    print(f"Validacion cruzada {modelo.__class__.__name__} con escalado...")
+    validar_modelo_cruzado_escalado(modelo, X_train, y_train)
     print(f"Entrenando modelo {modelo.__class__.__name__} con escalado...")
     modelo_entrenado = entrenar_modelo_escalado(modelo, X_train, y_train)
     mse, r2 = evaluar_modelo(modelo_entrenado, X_test, y_test)

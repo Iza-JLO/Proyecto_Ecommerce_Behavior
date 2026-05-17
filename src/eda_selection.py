@@ -159,8 +159,12 @@ def encoded_data(df: pd.DataFrame):
     y = df[TARGET]
     X = df.drop(TARGET, axis=1)
     
-    #Partición de datos en conjutnos de prueba y entrenamiento :p
+    #Partición de datos en conjuntos de prueba y entrenamiento :p
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=RANDOM_STATE)
+
+    #Transformamos la variable objetivo a escala logarítmica para ver si los modelos tienen mayor rendimiento
+    y_train = np.log1p(y_train)
+    y_test = np.log1p(y_test)
 
     #OneHotEncoder
     cols_onehot = ['payment_method', 'day_of_week', 'month']
