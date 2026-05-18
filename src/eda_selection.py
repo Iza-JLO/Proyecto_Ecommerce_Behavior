@@ -139,7 +139,7 @@ def seleccionar_features(df_enc: pd.DataFrame) -> list:
     #El umbral fue modificado para dejar fuera variables que puedan ser data leakage
     #Tales como impuestos, descuentos, etc. 
     for col, score in mi_series.items():
-      marca = " ✅" if 0.001 < score <= 0.3 else " ❌"
+      marca = " O" if 0.001 < score <= 0.3 else " X"
       print(f"  {col:<30} {score:>10.4f}{marca}")
  
     cols_seleccionadas = mi_series[
