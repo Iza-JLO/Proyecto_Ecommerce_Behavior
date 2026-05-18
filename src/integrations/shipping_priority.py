@@ -16,13 +16,19 @@ import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
-from sklearn.linear_model import LogisticRegression, Ridge
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import ElasticNet, LogisticRegression
 from sklearn.metrics import accuracy_score, r2_score, roc_auc_score, root_mean_squared_error
 from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.neural_network import MLPRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
+from sklearn.svm import SVR
+from sklearn.tree import DecisionTreeRegressor
+from xgboost import XGBRegressor
 
-from project_paths import DATA_DIR, LOGS_DIR, MODELS_DIR, REPORTS_DIR, ensure_project_dirs
+from project_paths import DATA_DIR, LOGS_DIR, MODELS_DIR, PROCESSED_DATA_DIR, REPORTS_DIR, ensure_project_dirs
 
 
 FEATURE_COLUMNS = [
@@ -51,6 +57,67 @@ QUEUE_PATH = REPORTS_DIR / "warehouse_queue.csv"
 MODEL_INFO_PATH = REPORTS_DIR / "shipping_model_info.json"
 
 RANDOM_STATE = 42
+PROJECT_MODEL_RESULTS_PATH = PROCESSED_DATA_DIR / "model_results.csv"
+
+
+def _project_value_estimators() -> dict[str, Any]:
+    return {
+        "DecisionTreeRegressor": DecisionTreeRegressor(random_state=RANDOM_STATE),
+        "RandomForestRegressor": RandomForestRegressor(n_estimators=150, random_state=RANDOM_STATE),
+        "XGBRegressor": XGBRegressor(
+            objective="reg:squarederror",
+            random_state=RANDOM_STATE,
+            n_estimators=1200,
+            learning_rate=0.02,
+            max_depth=6,
+            gamma=0.1,
+            subsample=0.8,
+            colsample_bytree=0.8,
+        ),
+        "MLPRegressor": MLPRegressor(
+            hidden_layer_sizes=(256, 128, 64),
+            solver="adam",
+            max_iter=3000,
+            batch_size=32,
+            early_stopping=True,
+            random_state=RANDOM_STATE,
+            learning_rate="adaptive",
+            learning_rate_init=0.0001,
+            alpha=0.0001,
+        ),
+        "SVR": SVR(C=50, gamma="scale", kernel="poly", degree=3, epsilon=0.1),
+        "ElasticNet": ElasticNet(alpha=0.001, l1_ratio=0.5, max_iter=10000, random_state=RANDOM_STATE),
+        "KNeighborsRegressor": KNeighborsRegressor(n_neighbors=5, weights="distance", metric="minkowski", p=2),
+    }
+
+
+def _select_project_value_model() -> tuple[str, Any, dict[str, Any]]:
+    estimators = _project_value_estimators()
+    if PROJECT_MODEL_RESULTS_PATH.exists():
+        results = pd.read_csv(PROJECT_MODEL_RESULTS_PATH)
+        results = results[results["model_name"].isin(estimators)]
+        if not results.empty:
+            best = results.sort_values("r2", ascending=False).iloc[0].to_dict()
+            model_name = str(best["model_name"])
+            return model_name, estimators[model_name], {
+                "model_name": model_name,
+                "r2": float(best["r2"]),
+                "mse": float(best["mse"]),
+                "scaling": str(best.get("scaling", "")),
+                "source_path": str(PROJECT_MODEL_RESULTS_PATH),
+            }
+
+    model_name = "RandomForestRegressor"
+    return model_name, estimators[model_name], {
+        "model_name": model_name,
+        "source_path": str(PROJECT_MODEL_RESULTS_PATH),
+        "note": "No model_results.csv found; using fallback project regressor.",
+    }
+
+
+def _needs_retrain(bundle: dict[str, Any]) -> bool:
+    info = bundle.get("info", {})
+    return info.get("value_model_source") != "best_project_model_by_r2"
 
 
 @dataclass
@@ -91,7 +158,7 @@ def _build_preprocessor() -> ColumnTransformer:
     categorical_pipe = Pipeline(
         [
             ("imputer", SimpleImputer(strategy="most_frequent")),
-            ("onehot", OneHotEncoder(handle_unknown="ignore")),
+            ("onehot", OneHotEncoder(handle_unknown="ignore", sparse_output=False)),
         ]
     )
     return ColumnTransformer(
@@ -105,7 +172,9 @@ def _build_preprocessor() -> ColumnTransformer:
 def train_shipping_models(force: bool = False) -> dict[str, Any]:
     ensure_project_dirs()
     if MODEL_BUNDLE_PATH.exists() and not force:
-        return joblib.load(MODEL_BUNDLE_PATH)
+        bundle = joblib.load(MODEL_BUNDLE_PATH)
+        if not _needs_retrain(bundle):
+            return bundle
 
     df = _read_orders()
     required = FEATURE_COLUMNS + ["total_amount_usd", "returned"]
@@ -126,12 +195,14 @@ def train_shipping_models(force: bool = False) -> dict[str, Any]:
         stratify=y_return,
     )
 
-    value_model = Pipeline(
-        [
-            ("preprocess", _build_preprocessor()),
-            ("model", Ridge(alpha=1.0, random_state=RANDOM_STATE)),
-        ]
-    )
+    value_model_name, value_estimator, project_best = _select_project_value_model()
+    value_steps: list[tuple[str, Any]] = [("preprocess", _build_preprocessor())]
+    if project_best.get("scaling") == "con escalado":
+        from sklearn.preprocessing import MinMaxScaler
+
+        value_steps.append(("scaler", MinMaxScaler()))
+    value_steps.append(("model", value_estimator))
+    value_model = Pipeline(value_steps)
     return_model = Pipeline(
         [
             ("preprocess", _build_preprocessor()),
@@ -161,7 +232,9 @@ def train_shipping_models(force: bool = False) -> dict[str, Any]:
         "value_rmse_usd": float(root_mean_squared_error(np.expm1(y_value_test), np.expm1(value_pred_log))),
         "return_accuracy": float(accuracy_score(y_return_test, return_pred)),
         "return_auc": float(roc_auc_score(y_return_test, return_prob)),
-        "model_type": "Ridge Regression + Logistic Regression",
+        "model_type": f"{value_model_name} + Logistic Regression",
+        "value_model_source": "best_project_model_by_r2",
+        "project_best_value_model": project_best,
     }
 
     bundle = {"value_model": value_model, "return_model": return_model, "info": info}

@@ -42,8 +42,10 @@ Variables usadas:
 
 Modelos usados:
 
-- `Ridge Regression` para predecir `total_amount_usd`.
+- El mejor modelo de regresion del proyecto segun `R2` en `data/processed/model_results.csv` para predecir `total_amount_usd`.
 - `Logistic Regression` para predecir `returned`.
+
+En la ejecucion actual, el mejor regresor detectado es `MLPRegressor`.
 
 ## Como ejecutar la API y el dashboard
 

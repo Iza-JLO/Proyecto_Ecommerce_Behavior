@@ -1,5 +1,5 @@
 {
-  "trained_at": "2026-05-18T10:26:45",
+  "trained_at": "2026-05-18T12:53:27",
   "features": [
     "product_name",
     "category",
@@ -12,9 +12,17 @@
   ],
   "train_rows": 20000,
   "test_rows": 5000,
-  "value_r2_log": 0.6822827539109854,
-  "value_rmse_usd": 99.6245901330182,
+  "value_r2_log": 0.6829691904022486,
+  "value_rmse_usd": 97.40005026207736,
   "return_accuracy": 0.9192,
-  "return_auc": 0.4955126713715758,
-  "model_type": "Ridge Regression + Logistic Regression"
+  "return_auc": 0.4948787796534222,
+  "model_type": "MLPRegressor + Logistic Regression",
+  "value_model_source": "best_project_model_by_r2",
+  "project_best_value_model": {
+    "model_name": "MLPRegressor",
+    "r2": 0.6806960377640471,
+    "mse": 0.2459280105402421,
+    "scaling": "con escalado",
+    "source_path": "/home/ijmc/Proyecto_Ecommerce_Behavior/data/processed/model_results.csv"
+  }
 }
