@@ -43,7 +43,7 @@ Debes verificar y actualizar, como minimo:
 - Carpetas de datos, si existen y estan versionadas
 - Carpetas de outputs/resultados, si existen
 - Modelos serializados, si existen
-- Scripts de entrenamiento, evaluacion, inferencia, API o dashboard, si existen
+- Scripts de carga, preprocesamiento, ingenieria de caracteristicas, entrenamiento y evaluacion, si existen
 
 Reglas estrictas:
 1. No modifiques codigo fuente.
@@ -57,7 +57,7 @@ Reglas estrictas:
 
 Procedimiento obligatorio:
 1. Antes de editar documentacion, inspecciona el repositorio completo.
-2. Identifica carpetas principales, archivos importantes, punto de entrada, notebooks, scripts de carga, preprocesamiento, ingenieria de caracteristicas, entrenamiento, evaluacion, visualizacion, dashboard, API, configuracion, dependencias, resultados, modelos guardados y documentacion previa.
+2. Identifica carpetas principales, archivos importantes, punto de entrada, notebooks, scripts de carga, preprocesamiento, ingenieria de caracteristicas, entrenamiento, evaluacion, configuracion, dependencias, resultados, modelos guardados y documentacion previa.
 3. Lee todos los archivos Markdown existentes y verifica si siguen coincidiendo con el repositorio actual.
 4. Actualiza solo los documentos que lo necesiten.
 5. Antes de finalizar, revisa los cambios con Git, confirma que no modificaste codigo fuente ni datos, lista los documentos actualizados y resume cualquier cosa que no pudo verificarse.

@@ -1,26 +1,23 @@
-# Comparativa con literatura academica
+# Comparativa interna de modelos
 
-No se identifican papers academicos citados, archivos bibliograficos, seccion de referencias ni implementaciones marcadas como reproduccion de articulos en el repositorio actual.
+Este documento resume la comparacion interna de modelos implementada en el pipeline actual.
 
-Por lo tanto, no es correcto afirmar que el proyecto reproduzca resultados de literatura academica o que implemente un metodo especifico tomado de un paper.
+## Comparacion disponible
 
-## Comparacion metodologica de alto nivel
+El repositorio compara varios modelos de regresion sobre la misma particion de entrenamiento y prueba, usando las mismas variables de entrada y las mismas metricas de evaluacion.
 
-El enfoque actual puede compararse de forma general con practicas comunes en estudios de comportamiento de usuarios en e-commerce:
+La comparacion actual se centra en:
 
-- Uso de variables transaccionales y de navegacion para modelar resultados de compra.
-- Preprocesamiento de datos con imputacion de valores faltantes.
-- Codificacion de variables categoricas.
-- Comparacion de modelos lineales, arboles, ensambles, redes neuronales y metodos kernel.
-- Evaluacion con metricas de regresion cuando el objetivo es numerico.
+- Modelos sin escalado.
+- Modelos con escalado mediante `MinMaxScaler`.
+- Evaluacion con `MSE` y `R2`.
+- Impresion de resultados en consola durante la ejecucion de `src/models.py`.
 
-Esta comparacion es conceptual. No representa una validacion contra papers concretos ni contra benchmarks publicados.
+## Alcance actual
 
-## Que faltaria para una comparativa academica formal
-
-Para documentar una comparativa academica con rigor, el repositorio deberia incluir referencias bibliograficas concretas, justificacion de modelos basada en literatura, protocolo experimental reproducible, resultados propios guardados y comparacion explicita contra resultados reportados por otros trabajos.
+La documentacion no registra benchmarks externos ni referencias fuera del pipeline implementado en el repositorio.
 
 ## Estado actual
 
-Pendiente de documentar porque no hay evidencia en el codigo ni en archivos del repositorio de una comparativa academica implementada.
+Implementado actualmente como comparacion interna de modelos dentro del flujo local.
 

@@ -1,6 +1,6 @@
 # Proyecto_Ecommerce_Behavior
 
-Proyecto de Machine Learning enfocado en el analisis del comportamiento de usuarios en e-commerce. El codigo actual descarga datos de ordenes, ejecuta preprocesamiento y seleccion de caracteristicas, y compara modelos de regresion para predecir `total_amount_usd`.
+Proyecto de Machine Learning enfocado en el analisis del comportamiento de usuarios en e-commerce. El codigo actual obtiene datos de ordenes, ejecuta preprocesamiento y seleccion de caracteristicas, y compara modelos de regresion para predecir `total_amount_usd`.
 
 ## Ejecucion rapida
 
@@ -62,15 +62,7 @@ La definicion del comando esta en `.agents/commands/actualizar_doc.md`.
 
 Implementado:
 
-- Descarga de datos desde Kaggle.
+- Obtencion de datos para el pipeline local.
 - Preprocesamiento y seleccion de caracteristicas.
 - Entrenamiento de modelos de regresion.
 - Evaluacion con MSE y R2 en consola.
-
-No identificado actualmente:
-
-- API de prediccion.
-- Dashboard.
-- Modelos serializados.
-- Resultados persistidos.
-- Tests automatizados.

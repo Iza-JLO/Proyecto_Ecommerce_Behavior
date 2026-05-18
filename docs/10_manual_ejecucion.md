@@ -7,7 +7,6 @@ Este manual describe como ejecutar el flujo implementado actualmente.
 Dependencias declaradas:
 
 ```txt
-kagglehub[pandas-datasets]
 pandas
 scikit-learn
 numpy
@@ -36,7 +35,7 @@ Salida esperada:
 data/orders.csv
 ```
 
-Nota: la descarga depende de acceso a Kaggle mediante `kagglehub`.
+Nota: esta etapa deja disponible el archivo local requerido por el resto del pipeline.
 
 ## 2. Ejecutar preprocesamiento y seleccion
 
@@ -82,7 +81,6 @@ data/orders.csv
 
 ## Problemas conocidos de ejecucion
 
-- El README original mencionaba `src/eda_selection_data.py`, pero el archivo real del repositorio es `src/eda_selection.py`.
 - Los datos no estan versionados porque `data/` esta en `.gitignore`.
 - Los modelos entrenados no se guardan; cada ejecucion vuelve a entrenarlos.
 - Las metricas no se guardan en archivo; solo se imprimen en consola.

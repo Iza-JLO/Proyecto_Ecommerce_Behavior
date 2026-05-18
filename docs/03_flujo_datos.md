@@ -1,11 +1,11 @@
 # Flujo de datos
 
-El flujo de datos implementado se basa en archivos CSV locales generados a partir de una descarga desde Kaggle.
+El flujo de datos implementado se basa en archivos CSV locales generados por el pipeline actual.
 
 ## Flujo implementado
 
 ```txt
-Kaggle dataset
+Obtencion de datos del pipeline
     |
     |  src/download_data.py
     v
@@ -22,7 +22,7 @@ Entrenamiento y evaluacion en consola
 
 ## Entrada principal
 
-`src/download_data.py` descarga el archivo `orders.csv` desde el dataset de Kaggle configurado en el script y lo guarda en:
+`src/download_data.py` genera o deja disponible el archivo `orders.csv` del pipeline y lo guarda en:
 
 ```txt
 data/orders.csv

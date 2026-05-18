@@ -1,6 +1,6 @@
 # Arquitectura general
 
-El repositorio tiene una estructura simple orientada a scripts y un notebook exploratorio. No se observa una arquitectura de paquete Python formal ni una aplicacion web/API.
+El repositorio tiene una estructura simple orientada a scripts y un notebook exploratorio. La arquitectura actual corresponde a un pipeline local de descarga, preprocesamiento, seleccion de caracteristicas y entrenamiento.
 
 ## Estructura actual
 
@@ -25,13 +25,13 @@ La carpeta `docs/` contiene la documentacion tecnica agregada al repositorio.
 
 ### `src/download_data.py`
 
-Script responsable de descargar `orders.csv` desde Kaggle mediante `kagglehub` y guardar el resultado en `data/orders.csv`.
+Script responsable de dejar disponible `orders.csv` en `data/orders.csv` para el resto del pipeline.
 
 ### `src/eda.ipynb`
 
 Notebook exploratorio breve. Carga `../data/orders.csv`, muestra las primeras filas del dataset y consulta la distribucion de la columna `category`.
 
-El notebook contiene salidas ejecutadas que muestran un dataset con 28 columnas y ejemplos de columnas como `order_id`, `customer_id`, `order_date`, `year`, `month`, `quarter`, `day_of_week`, `product_name`, `category`, `unit_price_usd`, `payment_method`, `device_used`, `delivery_days`, `delivery_date`, `order_status`, `returned`, `customer_rating`, `session_duration_minutes`, `pages_viewed_before_purchase` e `is_repeat_customer`.
+El archivo conserva salidas guardadas, pero no documenta un analisis exploratorio completo ni un diccionario formal de columnas.
 
 ### `src/eda_selection.py`
 
@@ -59,19 +59,9 @@ Script de entrenamiento y comparacion de modelos. Carga el dataset original y el
 
 ## Dependencias
 
-Las dependencias declaradas estan en `requirements.txt`:
-
-```txt
-kagglehub[pandas-datasets]
-pandas
-scikit-learn
-numpy
-matplotlib
-seaborn
-xgboost
-```
+Las dependencias declaradas estan en `requirements.txt` y cubren obtencion de datos, procesamiento, modelado y visualizacion.
 
 ## Estado de sistema predictivo
 
-No se identifica una capa de servicio, API, dashboard, interfaz de usuario, persistencia de modelos ni despliegue. El sistema actual funciona como pipeline local ejecutado por scripts.
+El sistema actual funciona como pipeline local ejecutado por scripts.
 

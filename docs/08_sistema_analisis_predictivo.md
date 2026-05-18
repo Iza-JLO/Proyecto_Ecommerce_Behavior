@@ -1,42 +1,23 @@
-# Sistema de analisis predictivo
+# Flujo predictivo actual
 
-Este documento separa el estado real del repositorio de posibles extensiones futuras.
+Este documento resume el pipeline implementado en el repositorio actual.
 
-## Estado actual
+## Etapas implementadas
 
-El repositorio implementa un pipeline local por scripts:
+1. Obtencion de datos del pipeline.
+2. Carga de `data/orders.csv`.
+3. Imputacion de valores nulos con `KNNImputer`.
+4. Codificacion temporal y seleccion de caracteristicas.
+5. Preparacion de conjuntos de entrenamiento y prueba.
+6. Entrenamiento de varios modelos de regresion.
+7. Evaluacion con `MSE` y `R2` en consola.
 
-1. Descarga de datos.
-2. Preprocesamiento y seleccion de caracteristicas.
-3. Entrenamiento y evaluacion de modelos.
+## Salidas del pipeline
 
-No se identifica una aplicacion de analisis predictivo con interfaz de usuario o servicio web.
+El pipeline genera como salida principal:
 
-## Dashboard
+- `data/orders.csv`
+- `data/processed/df_visualizacion.csv`
 
-No implementado actualmente.
-
-No se identifican archivos asociados a Streamlit, Dash, Panel, Gradio o una aplicacion web frontend.
-
-## API
-
-No implementada actualmente.
-
-No se identifican archivos asociados a Flask, FastAPI, endpoints HTTP, servicio de inferencia o carga de modelo serializado para prediccion.
-
-## Despliegue y tests
-
-No identificado en el repositorio actual:
-
-- Dockerfile.
-- `docker-compose.yml`.
-- Configuracion de nube.
-- Scripts de despliegue.
-- Tests automatizados.
-
-## Propuesta de extension futura
-
-Si el proyecto evoluciona hacia un sistema predictivo, seria razonable agregar persistencia del mejor modelo con `joblib`, un modulo de inferencia, API con FastAPI o Flask, dashboard con Streamlit o Dash, validaciones de esquema y tests unitarios.
-
-Estas propuestas no estan implementadas actualmente y no deben considerarse parte funcional del repositorio hasta que existan en el codigo.
+Los resultados numericos de los modelos se imprimen en consola durante la ejecucion de `src/models.py`.
 
