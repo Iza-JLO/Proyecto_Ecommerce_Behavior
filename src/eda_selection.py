@@ -3,12 +3,17 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 import os
+import json
+import sys
+from contextlib import redirect_stdout
 
 from sklearn.impute import KNNImputer
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.feature_selection import mutual_info_regression, VarianceThreshold
 from sklearn.preprocessing import TargetEncoder, OneHotEncoder
 from sklearn.model_selection import train_test_split
+
+from project_paths import DATA_DIR, PROCESSED_DATA_DIR, REPORTS_DIR, LOGS_DIR, ensure_project_dirs
 
 # ── CONFIGURACIÓN ───────────────────────────────────────────
 TARGET = "total_amount_usd"
@@ -33,7 +38,7 @@ def check(mensaje: str, ok: bool):
 def cargar_datos() -> pd.DataFrame:
     separador("PASO 1 — Cargar datos")
  
-    df = pd.read_csv("data/orders.csv")
+    df = pd.read_csv(DATA_DIR / "orders.csv")
  
     return df
  
@@ -220,11 +225,49 @@ def main():
     # 6. Guardar resultado
     separador("PASO 6 — Guardar")
     df_final = df_imp[cols_seleccionadas + [TARGET]].copy()
-    df_final.to_csv("data/processed/df_visualizacion.csv", index=False)
-    check(f"Guardado en data/processed/df_final.csv — Shape: {df_final.shape}", True)
+    output_path = PROCESSED_DATA_DIR / "df_visualizacion.csv"
+    df_final.to_csv(output_path, index=False)
+
+    summary = {
+        "target": TARGET,
+        "input_shape": [int(df.shape[0]), int(df.shape[1])],
+        "imputed_shape": [int(df_imp.shape[0]), int(df_imp.shape[1])],
+        "final_shape": [int(df_final.shape[0]), int(df_final.shape[1])],
+        "selected_features": cols_seleccionadas,
+        "selected_feature_count": len(cols_seleccionadas),
+        "output_path": str(output_path),
+    }
+
+    with (REPORTS_DIR / "eda_selection_summary.json").open("w", encoding="utf-8") as handle:
+        json.dump(summary, handle, indent=2, ensure_ascii=False)
+
+    with (REPORTS_DIR / "selected_features.txt").open("w", encoding="utf-8") as handle:
+        handle.write("\n".join(cols_seleccionadas))
+
+    check(f"Guardado en {output_path} — Shape: {df_final.shape}", True)
+    print(f"Resumen guardado en {REPORTS_DIR / 'eda_selection_summary.json'}")
+    print(f"Listado de features guardado en {REPORTS_DIR / 'selected_features.txt'}")
  
     separador("PIPELINE COMPLETADO")
  
  
 if __name__ == "__main__":
-    main()
+    ensure_project_dirs()
+
+    log_path = LOGS_DIR / "eda_selection.log"
+
+    class Tee:
+        def __init__(self, *streams):
+            self.streams = streams
+
+        def write(self, data):
+            for stream in self.streams:
+                stream.write(data)
+
+        def flush(self):
+            for stream in self.streams:
+                stream.flush()
+
+    with log_path.open("w", encoding="utf-8") as log_file:
+        with redirect_stdout(Tee(sys.stdout, log_file)):
+            main()
