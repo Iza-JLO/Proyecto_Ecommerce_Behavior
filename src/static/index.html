@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Shipping Priority Dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="topbar">
+        <div>
+          <p class="eyebrow">Logistica e-commerce</p>
+          <h1>Shipping Priority Dashboard</h1>
+        </div>
+        <button id="simulateBtn">Simular pedido</button>
+      </section>
+
+      <section class="metrics" aria-label="Resumen">
+        <article>
+          <span>Pedidos</span>
+          <strong id="ordersCount">0</strong>
+        </article>
+        <article>
+          <span>Revenue esperado</span>
+          <strong id="expectedRevenue">$0</strong>
+        </article>
+        <article>
+          <span>Prioridad alta</span>
+          <strong id="highPriority">0</strong>
+        </article>
+        <article>
+          <span>Riesgo alto</span>
+          <strong id="highRisk">0</strong>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="panelHeader">
+          <h2>Pedidos procesados</h2>
+          <span id="modelStatus">Cargando modelos...</span>
+        </div>
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Pedido</th>
+                <th>Producto</th>
+                <th>Valor</th>
+                <th>Devolucion</th>
+                <th>Revenue</th>
+                <th>Prioridad</th>
+              </tr>
+            </thead>
+            <tbody id="ordersBody">
+              <tr>
+                <td colspan="6" class="empty">Sin pedidos todavia</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
